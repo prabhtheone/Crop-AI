@@ -21,3 +21,5 @@ A useful pull request should include:
 ## Issues
 
 For bugs, include the Python/TensorFlow version, the command or notebook cell used, the error message, and enough information to reproduce the issue without sharing private data.
+
+#contribute and be happy
