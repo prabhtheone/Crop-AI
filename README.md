@@ -5,7 +5,7 @@
 Crop AI is a deep-learning agricultural computer-vision project using a two-stage pipeline:
 
 1. **Crop classification:** Banana, Guava, Maize, Rice, or Wheat.
-2. **Quality grading:** when the predicted crop is Guava, a second model predicts **A / B / C / Reject**.
+2. **Quality grading:** when the predicted crop is Guava, a second model predicts **A/B/C/ Reject**.
 
 > **Important:** Quality grading is currently available for Guava only we are workint to increase the number of crops on grading model.
 
