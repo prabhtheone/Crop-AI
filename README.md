@@ -149,6 +149,8 @@ The reported accuracies are test-set evaluation results from the project. They a
 - [ ] Web/mobile deployment
 - [ ] Explainable AI / visual attention
 
+working on changing the grading system from A/B/C/ REJECT to A/B/C/D
+
 ## 🤝 Contributing
 
 Bug reports, experiments, documentation improvements, and pull requests are welcome. See `CONTRIBUTING.md`.
