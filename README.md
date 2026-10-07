@@ -1,13 +1,13 @@
 # 🌾 Crop AI — Intelligent Crop Classification & Quality Grading
 
-### Computer Vision for Crop Recognition + Guava Quality Analysis 🤖🌱
+### Computer Vision for 5-Crop Recognition + Multi-Crop Quality Grading 🤖🌱
 
 Crop AI is a deep-learning agricultural computer-vision project using a two-stage pipeline:
 
 1. **Crop classification:** Banana, Guava, Maize, Rice, or Wheat.
-2. **Quality grading:** when the predicted crop is Guava, a second model predicts **A/B/C/ Reject**.
+2. **Quality grading:** a second EfficientNetB2 model grades supported crop images into **A / B / C / D** quality classes.
 
-> **Important:** Quality grading is currently available for Guava only we are workint to increase the number of crops on grading model.
+> **Current quality-model release:** EfficientNetB2 at 260×260, trained on 4,295 labelled images across 18 available crop-quality classes. The best validation accuracy recorded during training was **91.46%**.
 
 ## 🚀 Pipeline
 
@@ -20,17 +20,19 @@ Crop AI is a deep-learning agricultural computer-vision project using a two-stag
       ↓
 🌾 Banana / Guava / Maize / Rice / Wheat
       ↓
-🍈 If Guava → EfficientNetB0 Quality Model
+🖼️ 260 × 260
       ↓
-🏷️ A / B / C / Reject
+🧠 EfficientNetB2 Quality Model
+      ↓
+🏷️ A / B / C / D
 ```
 
 ## 🧠 Released Models
 
-| Model | Architecture | Classes | Recorded Test Accuracy |
+| Model | Architecture | Classes | Recorded Accuracy |
 |---|---|---|---:|
-| Crop Classification Champion | EfficientNetB0 | 5 crops | **91.76%** |
-| Guava Quality Champion | EfficientNetB0 | A / B / C / Reject | **78.27%** |
+| Crop Classification Champion | EfficientNetB0 | 5 crops | **91.76% test** |
+| Multi-Crop Quality Champion | EfficientNetB2 | 18 available crop-quality classes | **91.46% validation** |
 
 ### Crop Classification Champion
 
@@ -38,18 +40,26 @@ Crop AI is a deep-learning agricultural computer-vision project using a two-stag
 
 - Input: 224 × 224 × 3
 - Classes: Banana, Guava, Maize, Rice, Wheat
-- Recorded final test accuracy: **91.76%**
-- Uses EfficientNetB0 transfer learning with augmentation and a 5-class softmax head.
+- Recorded test accuracy: **91.76%**
+- EfficientNetB0 transfer learning with augmentation and a 5-class softmax head.
 
-### Guava Quality Champion
+### Multi-Crop Quality Champion
 
-`model/CROP_QUALITY_MODEL_CHAMPION_78_27_TEST.keras`
+`model/QUALITY_MODEL_B2_260_BEST.keras`
 
-- Input: 224 × 224 × 3
-- Classes: A, B, C, Reject
-- Recorded final test accuracy: **78.27%**
-- Reported test set: 520 images
-- Uses EfficientNetB0 with augmentation and a 4-class softmax head.
+- Architecture: EfficientNetB2
+- Input: 260 × 260 × 3
+- Best recorded validation accuracy: **91.46%**
+- Dataset: **4,295 images**
+- Available quality classes:
+  - Banana: A / B / D
+  - Guava: A / B / D
+  - Maize: A / B / C / D
+  - Rice: A / B / C / D
+  - Wheat: A / B / C / D
+- **Banana-C and Guava-C are not present in the current training dataset**, so this release is an 18-class model rather than a complete 20-class (5 crops × 4 grades) model.
+
+Quality labels are project-defined visual grading categories, not official agricultural certification grades.
 
 ## 📊 Dataset
 
@@ -64,7 +74,7 @@ Crop AI is a deep-learning agricultural computer-vision project using a two-stag
 | Guava | 1,000 |
 | **Total** | **14,194** |
 
-The split is **80% train / 10% validation / 10% test**, stratified with `random_state=42`:
+Split: **80% train / 10% validation / 10% test**, stratified with `random_state=42`.
 
 - Train: 11,355
 - Validation: 1,419
@@ -74,7 +84,7 @@ The raw dataset is not included in this repository.
 
 ### Quality Dataset
 
-The quality workflow uses labelled Guava images with four classes: **A, B, C, Reject**.
+The current quality training set contains **4,295 images** across 18 available crop-quality classes. The current distribution is intentionally capped at up to 250 images per class where available; Banana and Guava do not currently have Class C images in the prepared dataset.
 
 ## 🧪 Quick Inference
 
@@ -85,7 +95,7 @@ pip install -r requirements.txt
 python src/predict.py path/to/your/image.jpg
 ```
 
-A small notebook demo is also included at:
+A notebook demo is also included at:
 
 `notebook/Crop_AI_Inference_Demo.ipynb`
 
@@ -95,7 +105,7 @@ A small notebook demo is also included at:
 Crop-AI/
 ├── model/
 │   ├── CROP_MODEL_CHAMPION_91_76_TEST.keras
-│   └── CROP_QUALITY_MODEL_CHAMPION_78_27_TEST.keras
+│   └── QUALITY_MODEL_B2_260_BEST.keras
 ├── notebook/
 │   └── Crop_AI_Inference_Demo.ipynb
 ├── src/
@@ -118,6 +128,7 @@ The `.keras` files are managed with **Git LFS**. Raw datasets and private creden
 - Python
 - TensorFlow / Keras
 - EfficientNetB0
+- EfficientNetB2
 - NumPy
 - Pillow
 - Pandas
@@ -128,11 +139,17 @@ The `.keras` files are managed with **Git LFS**. Raw datasets and private creden
 
 ## 📈 Evaluation Notes
 
-The reported accuracies are test-set evaluation results from the project. They are not guarantees of real-world accuracy. Performance can change with lighting, backgrounds, camera quality, crop varieties, image source, and other domain-shift conditions.
+The crop-classification **91.76%** figure is a recorded test-set accuracy.
+
+The quality-model **91.46%** figure is the best **validation accuracy recorded during the 18-class training run**. It should not be presented as a held-out test accuracy.
+
+Real-world performance can change with lighting, backgrounds, camera quality, crop varieties, image source, and other domain-shift conditions.
 
 ## ⚠️ Limitations
 
-- Quality grading is currently designed for Guava only.
+- The current quality model has 18 available crop-quality classes because Banana-C and Guava-C are missing from the prepared dataset.
+- A complete 20-class A/B/C/D model requires real Banana-C and Guava-C labelled images.
+- Quality grades are project-defined visual categories, not official agricultural certification.
 - This is a research/learning prototype, not a professional agricultural diagnosis system.
 - Larger and more diverse real-world testing is still needed.
 
@@ -141,15 +158,15 @@ The reported accuracies are test-set evaluation results from the project. They a
 - [x] Multi-crop classification
 - [x] EfficientNetB0 transfer learning
 - [x] Crop evaluation
-- [x] Guava quality classification
-- [x] A/B/C/Reject grading
-- [x] Two-stage crop + quality inference
+- [x] Multi-crop quality model
+- [x] A/B/C/D grading scheme
+- [x] EfficientNetB2 260×260 quality model
+- [ ] Add real Banana-C and Guava-C data
+- [ ] Train complete 20-class A/B/C/D model
+- [ ] Held-out test evaluation for quality model
 - [ ] Larger real-world robustness evaluation
-- [ ] Quality labels for additional crops
 - [ ] Web/mobile deployment
 - [ ] Explainable AI / visual attention
-
-working on changing the grading system from A/B/C/ REJECT to A/B/C/D
 
 ## 🤝 Contributing
 
