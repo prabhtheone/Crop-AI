@@ -1,25 +1,33 @@
-# Contributing to Crop AI
+# Contributing
 
-Thanks for your interest in improving Crop AI.
+Thanks for taking an interest in Crop AI.
 
-## Before opening a change
+## Development setup
 
-1. Keep datasets, credentials, and local/private files out of Git.
-2. Keep trained `.keras` files managed through Git LFS.
-3. Describe what changed and how you tested it.
-4. Avoid presenting validation or test results as guaranteed real-world accuracy.
+1. Install Python and Git.
+2. Install Git LFS and run `git lfs pull` after cloning.
+3. Create a virtual environment and install `requirements.txt`.
+4. Run the checks below before opening a pull request.
+
+## Checks
+
+```bash
+python -m py_compile src/predict.py
+python -m unittest discover -s tests -v
+python -m json.tool notebook/Crop_AI_Inference_Demo.ipynb > /dev/null
+```
+
+The unit tests use fake model outputs. They verify prediction handling, class-count checks, and missing Git LFS objects; they do not evaluate the trained models.
 
 ## Pull requests
 
-A useful pull request should include:
+Keep changes focused and explain:
 
-- a short summary of the change;
-- relevant screenshots or example output for user-facing changes;
-- evaluation details when model behavior changes;
-- any new limitations or data requirements.
+- what changed and why;
+- how the change was tested;
+- whether model behaviour, class order, input size, or data requirements changed;
+- any new limitations or untested cases.
 
-## Issues
+Do not commit datasets, credentials, virtual environments, or generated files. Keep trained `.keras` files under Git LFS. Do not describe validation accuracy as test accuracy or claim real-world performance without a documented evaluation.
 
-For bugs, include the Python/TensorFlow version, the command or notebook cell used, the error message, and enough information to reproduce the issue without sharing private data.
-
-#contribute and be happy
+Use fictional or public-permission sample images when testing.

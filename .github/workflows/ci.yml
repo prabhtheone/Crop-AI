@@ -2,18 +2,25 @@ name: Project checks
 
 on:
   push:
-    branches: [main]
   pull_request:
 
 jobs:
-  syntax:
+  python-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - name: Compile inference code
+          python-version: "3.11"
+
+      - name: Compile inference module
         run: python -m py_compile src/predict.py
-      - name: Validate demo notebook JSON
+
+      - name: Run inference unit tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Validate notebook JSON
         run: python -m json.tool notebook/Crop_AI_Inference_Demo.ipynb > /dev/null
