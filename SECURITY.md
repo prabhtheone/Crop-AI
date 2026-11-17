@@ -1,16 +1,21 @@
-# Security
+# Security and responsible use
 
-## Reporting a vulnerability
+Crop AI is a learning/research prototype. Its output is not a certified agricultural inspection, food-safety, or commercial grading decision.
 
-Please do not publish secrets, credentials, or private information in an issue.
+## Data and credentials
 
-If you find a security problem in this project, contact the repository owner privately through GitHub before publicly disclosing the details.
+- Do not commit API keys, credentials, private images, or personal information.
+- Keep private datasets out of Git.
+- Keep trained model files in Git LFS.
+- Review staged files before committing.
 
-## Repository hygiene
+## Model limitations
 
-- API keys and credentials should never be committed.
-- Local datasets and private files are excluded through `.gitignore`.
-- Keras model artifacts are managed with Git LFS.
-- Before pushing changes, review `git status` and the staged file list.
+- Quality grading is currently available for Guava only.
+- Confidence values are model scores and are not calibrated probabilities.
+- The reported evaluation results are not guarantees of performance on new farms, varieties, cameras, or lighting conditions.
+- A human should review outputs before using them for a commercial or financial decision.
 
-This project does not intentionally require API keys for its local inference workflow.
+## Reporting
+
+Do not publish credentials or private data in an issue. Report security-sensitive problems privately to the repository owner through GitHub.
