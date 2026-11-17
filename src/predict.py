@@ -91,7 +91,7 @@ def _top_prediction(
             f"{len(classes)} configured classes."
         )
 
-    if not scores:
+    if len(scores) == 0:
         raise ValueError(f"{model_name} returned no prediction scores.")
 
     try:
@@ -123,7 +123,6 @@ def predict(image_path: str | Path) -> dict[str, str | float | None]:
         raise FileNotFoundError(f"Image not found: {image}")
 
     _require_model_file(CROP_MODEL)
-    _require_model_file(QUALITY_MODEL)
 
     np, tf, img_to_array, load_img = _load_runtime()
     try:
@@ -154,6 +153,7 @@ def predict(image_path: str | Path) -> dict[str, str | float | None]:
     if crop != "Guava" or crop_confidence < MIN_GUAVA_CONFIDENCE:
         return result
 
+    _require_model_file(QUALITY_MODEL)
     try:
         quality_model = tf.keras.models.load_model(QUALITY_MODEL)
     except (OSError, ValueError) as exc:
