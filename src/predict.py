@@ -63,13 +63,15 @@ def _require_model_file(path: Path) -> None:
 def load_image(
     image_path: str | Path,
     size: tuple[int, int] = IMAGE_SIZE,
+    *,
+    runtime: tuple[Any, Any, Any, Any] | None = None,
 ) -> Any:
     """Load an image and return a batched float32 array."""
     path = Path(image_path).expanduser()
     if not path.is_file():
         raise FileNotFoundError(f"Image not found: {path}")
 
-    np, _, img_to_array, load_img = _load_runtime()
+    np, _, img_to_array, load_img = runtime or _load_runtime()
     try:
         image = load_img(str(path), target_size=size)
         array = img_to_array(image).astype("float32")
@@ -124,15 +126,9 @@ def predict(image_path: str | Path) -> dict[str, str | float | None]:
 
     _require_model_file(CROP_MODEL)
 
-    np, tf, img_to_array, load_img = _load_runtime()
-    try:
-        loaded_image = load_img(str(image), target_size=IMAGE_SIZE)
-        image_array = np.expand_dims(
-            img_to_array(loaded_image).astype("float32"),
-            axis=0,
-        )
-    except (OSError, ValueError) as exc:
-        raise ValueError(f"Could not read image '{image}': {exc}") from exc
+    runtime = _load_runtime()
+    _, tf, _, _ = runtime
+    image_array = load_image(image, IMAGE_SIZE, runtime=runtime)
 
     try:
         crop_model = tf.keras.models.load_model(CROP_MODEL)
