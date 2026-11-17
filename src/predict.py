@@ -87,14 +87,14 @@ def _top_prediction(
     model_name: str,
 ) -> tuple[str, float]:
     """Map one model output row to a label and percentage confidence."""
+    if len(scores) == 0:
+        raise ValueError(f"{model_name} returned no prediction scores.")
+
     if len(scores) != len(classes):
         raise ValueError(
             f"{model_name} returned {len(scores)} scores for "
             f"{len(classes)} configured classes."
         )
-
-    if len(scores) == 0:
-        raise ValueError(f"{model_name} returned no prediction scores.")
 
     try:
         values = [float(score) for score in scores]
